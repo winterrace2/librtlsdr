@@ -26,6 +26,7 @@ extern "C" {
 
 #include <stdint.h>
 #include <rtl-sdr_export.h>
+#include "redir_print.h"
 
 typedef struct rtlsdr_dev rtlsdr_dev_t;
 

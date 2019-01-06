@@ -28,6 +28,7 @@
 
 #include "rtlsdr_i2c.h"
 #include "tuner_r82xx.h"
+#include "redir_print.h"
 
 #define ARRAY_SIZE(arr) (sizeof(arr) / sizeof((arr)[0]))
 #define MHZ(x)		((x)*1000*1000)
@@ -271,7 +272,7 @@ static int r82xx_write(struct r82xx_priv *priv, uint8_t reg, const uint8_t *val,
 					 priv->buf, size + 1);
 
 		if (rc != size + 1) {
-			fprintf(stderr, "%s: i2c wr failed=%d reg=%02x len=%d\n",
+			rtlsdr_fprintf(stderr, "%s: i2c wr failed=%d reg=%02x len=%d\n",
 				   __FUNCTION__, rc, reg, size);
 			if (rc < 0)
 				return rc;
@@ -336,7 +337,7 @@ static int r82xx_read(struct r82xx_priv *priv, uint8_t reg, uint8_t *val, int le
 	rc = rtlsdr_i2c_read_fn(priv->rtl_dev, priv->cfg->i2c_addr, p, len);
 
 	if (rc != len) {
-		fprintf(stderr, "%s: i2c rd failed=%d reg=%02x len=%d\n",
+		rtlsdr_fprintf(stderr, "%s: i2c rd failed=%d reg=%02x len=%d\n",
 			   __FUNCTION__, rc, reg, len);
 		if (rc < 0)
 			return rc;
@@ -489,7 +490,7 @@ static int r82xx_set_pll(struct r82xx_priv *priv, uint32_t freq)
 	vco_fra = (vco_freq - 2 * pll_ref * nint) / 1000;
 
 	if (nint > ((128 / vco_power_ref) - 1)) {
-		fprintf(stderr, "[R82XX] No valid PLL values for %u Hz!\n", freq);
+		rtlsdr_fprintf(stderr, "[R82XX] No valid PLL values for %u Hz!\n", freq);
 		return -1;
 	}
 
@@ -547,7 +548,7 @@ static int r82xx_set_pll(struct r82xx_priv *priv, uint32_t freq)
 	}
 
 	if (!(data[2] & 0x40)) {
-		fprintf(stderr, "[R82XX] PLL not locked!\n");
+		rtlsdr_fprintf(stderr, "[R82XX] PLL not locked!\n");
 		priv->has_lock = 0;
 		return 0;
 	}
@@ -1117,7 +1118,7 @@ int r82xx_set_freq(struct r82xx_priv *priv, uint32_t freq)
 
 err:
 	if (rc < 0)
-		fprintf(stderr, "%s: failed=%d\n", __FUNCTION__, rc);
+		rtlsdr_fprintf(stderr, "%s: failed=%d\n", __FUNCTION__, rc);
 	return rc;
 }
 
@@ -1255,7 +1256,7 @@ int r82xx_init(struct r82xx_priv *priv)
 
 err:
 	if (rc < 0)
-		fprintf(stderr, "%s: failed=%d\n", __FUNCTION__, rc);
+		rtlsdr_fprintf(stderr, "%s: failed=%d\n", __FUNCTION__, rc);
 	return rc;
 }
 
